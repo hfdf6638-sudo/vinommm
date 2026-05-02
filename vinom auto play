@@ -1,4 +1,4 @@
--- Vinom Hub ✨ Silver Edition + Follow System
+-- Vinom Hub ✨ Silver Pro Edition
 
 local player = game.Players.LocalPlayer
 local UIS = game:GetService("UserInputService")
@@ -8,15 +8,32 @@ local ScreenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 
 -- واجهة
 local Main = Instance.new("Frame")
-Main.Size = UDim2.new(0, 240, 0, 130)
-Main.Position = UDim2.new(0.5, -120, 0.5, -65)
-Main.BackgroundColor3 = Color3.fromRGB(180, 180, 180)
+Main.Size = UDim2.new(0, 240, 0, 150)
+Main.Position = UDim2.new(0.5, -120, 0.5, -75)
+Main.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
 Main.BorderSizePixel = 0
 Main.Active = true
 Main.Parent = ScreenGui
 
+-- لمعة متحركة
+local grad = Instance.new("UIGradient", Main)
+grad.Color = ColorSequence.new{
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(255,255,255)),
+	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(170,170,170)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(255,255,255))
+}
+
+task.spawn(function()
+	while true do
+		task.wait(0.03)
+		grad.Rotation = grad.Rotation + 2
+	end
+end)
+
+-- عنوان VINOM
 local Title = Instance.new("TextLabel")
 Title.Size = UDim2.new(1, 0, 0, 30)
+Title.Position = UDim2.new(0, 0, 0, 0)
 Title.Text = "VINOM"
 Title.TextColor3 = Color3.fromRGB(255,255,255)
 Title.BackgroundTransparency = 1
@@ -24,11 +41,23 @@ Title.Font = Enum.Font.GothamBold
 Title.TextScaled = true
 Title.Parent = Main
 
+-- فينوم أوتو بلاي (عربي)
+local SubTitle = Instance.new("TextLabel")
+SubTitle.Size = UDim2.new(1, 0, 0, 20)
+SubTitle.Position = UDim2.new(0, 0, 0, 30)
+SubTitle.Text = "فينوم أوتو بلاي"
+SubTitle.TextColor3 = Color3.fromRGB(235,235,235)
+SubTitle.BackgroundTransparency = 1
+SubTitle.Font = Enum.Font.GothamBold
+SubTitle.TextScaled = true
+SubTitle.Parent = Main
+
+-- زر
 local Button = Instance.new("TextButton")
 Button.Size = UDim2.new(0.8, 0, 0, 40)
-Button.Position = UDim2.new(0.1, 0, 0.5, -10)
+Button.Position = UDim2.new(0.1, 0, 0.55, -10)
 Button.Text = "تشغيل"
-Button.BackgroundColor3 = Color3.fromRGB(120,120,120)
+Button.BackgroundColor3 = Color3.fromRGB(140,140,140)
 Button.TextColor3 = Color3.fromRGB(255,255,255)
 Button.Font = Enum.Font.GothamBold
 Button.TextScaled = true
@@ -89,23 +118,21 @@ Button.MouseButton1Click:Connect(function()
 	Button.Text = following and "يعمل..." or "تشغيل"
 end)
 
--- 💀 نظام المطاردة السريعة (مركب داخل الزر)
+-- 🔥 مطاردة أسرع + وسط اللاعب
 task.spawn(function()
 	while true do
-		task.wait(0.15)
+		task.wait(0.12)
 
 		if following and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
 			local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
 			local target = getClosestPlayer()
 
 			if humanoid then
-				humanoid.WalkSpeed = 28
+				humanoid.WalkSpeed = 32
 
 				if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-					local targetPos = target.Character.HumanoidRootPart.Position
-					local followPos = targetPos + (target.Character.HumanoidRootPart.CFrame.LookVector * -2)
-
-					humanoid:MoveTo(followPos)
+					local targetRoot = target.Character.HumanoidRootPart.Position
+					humanoid:MoveTo(targetRoot)
 				end
 			end
 		end
