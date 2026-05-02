@@ -1,4 +1,4 @@
--- Vinom Hub 💀 FIXED VERSION
+-- Vinom Hub ✨ Silver Edition + Follow System
 
 local player = game.Players.LocalPlayer
 local UIS = game:GetService("UserInputService")
@@ -6,10 +6,11 @@ local RunService = game:GetService("RunService")
 
 local ScreenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 
+-- واجهة
 local Main = Instance.new("Frame")
-Main.Size = UDim2.new(0, 220, 0, 120)
-Main.Position = UDim2.new(0.5, -110, 0.5, -60)
-Main.BackgroundColor3 = Color3.fromRGB(120, 0, 0)
+Main.Size = UDim2.new(0, 240, 0, 130)
+Main.Position = UDim2.new(0.5, -120, 0.5, -65)
+Main.BackgroundColor3 = Color3.fromRGB(180, 180, 180)
 Main.BorderSizePixel = 0
 Main.Active = true
 Main.Parent = ScreenGui
@@ -25,15 +26,15 @@ Title.Parent = Main
 
 local Button = Instance.new("TextButton")
 Button.Size = UDim2.new(0.8, 0, 0, 40)
-Button.Position = UDim2.new(0.1, 0, 0.5, -20)
+Button.Position = UDim2.new(0.1, 0, 0.5, -10)
 Button.Text = "تشغيل"
-Button.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+Button.BackgroundColor3 = Color3.fromRGB(120,120,120)
 Button.TextColor3 = Color3.fromRGB(255,255,255)
 Button.Font = Enum.Font.GothamBold
 Button.TextScaled = true
 Button.Parent = Main
 
--- دراغ ثابت (ما يخرب على الجوال ولا الكمبيوتر)
+-- سحب
 local dragging = false
 local dragStart
 local startPos
@@ -88,20 +89,24 @@ Button.MouseButton1Click:Connect(function()
 	Button.Text = following and "يعمل..." or "تشغيل"
 end)
 
--- تحديث بطيء بدل spam = بدون تيليبورت
+-- 💀 نظام المطاردة السريعة (مركب داخل الزر)
 task.spawn(function()
 	while true do
-		task.wait(0.25)
+		task.wait(0.15)
 
 		if following and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
 			local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
 			local target = getClosestPlayer()
 
-			if humanoid and target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-				local targetPos = target.Character.HumanoidRootPart.Position
-				local followPos = targetPos + (target.Character.HumanoidRootPart.CFrame.LookVector * -3)
+			if humanoid then
+				humanoid.WalkSpeed = 28
 
-				humanoid:MoveTo(followPos)
+				if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+					local targetPos = target.Character.HumanoidRootPart.Position
+					local followPos = targetPos + (target.Character.HumanoidRootPart.CFrame.LookVector * -2)
+
+					humanoid:MoveTo(followPos)
+				end
 			end
 		end
 	end
