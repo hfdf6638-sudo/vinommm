@@ -1,4 +1,4 @@
--- Vinom Hub 💀
+-- Vinom Hub 💀 (Follow Smooth)
 
 local player = game.Players.LocalPlayer
 local UIS = game:GetService("UserInputService")
@@ -15,7 +15,6 @@ Main.BorderSizePixel = 0
 Main.Active = true
 Main.Parent = ScreenGui
 
--- اسم السكربت
 local Title = Instance.new("TextLabel")
 Title.Size = UDim2.new(1, 0, 0, 30)
 Title.Text = "VINOM"
@@ -25,7 +24,6 @@ Title.Font = Enum.Font.GothamBold
 Title.TextScaled = true
 Title.Parent = Main
 
--- زر تشغيل
 local Button = Instance.new("TextButton")
 Button.Size = UDim2.new(0.8, 0, 0, 40)
 Button.Position = UDim2.new(0.1, 0, 0.5, -20)
@@ -36,8 +34,8 @@ Button.Font = Enum.Font.GothamBold
 Button.TextScaled = true
 Button.Parent = Main
 
--- تحريك الواجهة
-local dragging, dragInput, dragStart, startPos
+-- تحسين السحب (بدون دراما)
+local dragging, dragStart, startPos
 
 Main.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -47,24 +45,28 @@ Main.InputBegan:Connect(function(input)
 	end
 end)
 
-Main.InputChanged:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseMovement then
-		dragInput = input
+UIS.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = false
 	end
 end)
 
 UIS.InputChanged:Connect(function(input)
-	if input == dragInput and dragging then
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
 		local delta = input.Position - dragStart
-		Main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+		Main.Position = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset + delta.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset + delta.Y
+		)
 	end
 end)
 
 -- أقرب لاعب
 local function getClosestPlayer()
-	local closest = nil
-	local shortest = math.huge
-	
+	local closest, shortest = nil, math.huge
+
 	for _, v in pairs(game.Players:GetPlayers()) do
 		if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
 			local dist = (player.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).Magnitude
@@ -74,11 +76,10 @@ local function getClosestPlayer()
 			end
 		end
 	end
-	
+
 	return closest
 end
 
--- تتبع
 local following = false
 
 Button.MouseButton1Click:Connect(function()
@@ -86,11 +87,24 @@ Button.MouseButton1Click:Connect(function()
 	Button.Text = following and "يعمل..." or "تشغيل"
 end)
 
+-- متابعة ذكية (يمشي ورا اللاعب مو يختطفه)
 RunService.RenderStepped:Connect(function()
-	if following and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-		local target = getClosestPlayer()
-		if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-			player.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0,0,2)
-		end
+	if not following then return end
+
+	local char = player.Character
+	if not char then return end
+
+	local humanoid = char:FindFirstChildOfClass("Humanoid")
+	local root = char:FindFirstChild("HumanoidRootPart")
+	if not humanoid or not root then return end
+
+	local target = getClosestPlayer()
+	if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+		local targetPos = target.Character.HumanoidRootPart.Position
+
+		-- يقف خلفه شوي (بدل التصاق مزعج)
+		local followPos = targetPos + (target.Character.HumanoidRootPart.CFrame.LookVector * -3)
+
+		humanoid:MoveTo(followPos)
 	end
 end)
